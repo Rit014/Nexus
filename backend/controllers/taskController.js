@@ -23,7 +23,7 @@ const getTask = async (req, res) => {
 // Create a task inside a specific project
 // POST /api/tasks
 const createTask = async (req, res) => {
-    const { title, description, projectId, priority, status } = req.body;
+    const { title, description, projectId, priority, status, dueDate } = req.body;
 
     const project = await Project.findOne({ _id: projectId, user: req.user.id });
 
@@ -43,7 +43,8 @@ const createTask = async (req, res) => {
             title,
             description,
             priority: priority || 'Medium',
-            status: status || 'To-Do'
+            status: status || 'To-Do',
+            dueDate: dueDate || null
         });
 
         res.status(201).json(task);

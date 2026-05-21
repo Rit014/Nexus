@@ -3,13 +3,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { generateToken } = require('../utils/generateToken');
 
-const registerUser = async(req, res) => {
+const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
 
-    try{
-        const userExists = await User.findOne({email});
-        if(userExists){
-            return res.status(400).json({msg : 'User already exists'});
+    try {
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            return res.status(400).json({ msg: 'User already exists' });
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -23,36 +23,40 @@ const registerUser = async(req, res) => {
             password: hashPassword,
         });
 
-        if(user){
+        if (user) {
             res.status(201).json({
-                _id: user.id,
-                name: user.name,
-                email: user.email,
+                token: generateToken(user._id),
+                user: {
+                    _id: user.id,
+                    name: user.name,
+                    email: user.email,
+                },
             })
         }
 
-    }catch(error){
-        res.status(500).json({ msg: "Server error during user Resgistration "});
+    } catch (error) {
+        res.status(500).json({ msg: "Server error during user Resgistration " });
     }
 }
 
-const loginUser = async(req, res) => {
-    const {email, password } = req.body;
+const loginUser = async (req, res) => {
+    const { email, password } = req.body;
 
-    try{
+    try {
 
         const user = await User.findOne({ email });
 
         if (user && (await bcrypt.compare(password, user.password))) {
             res.json({
-            _id: user.id,
-            name: user.name,
-            email: user.email,
-            token: generateToken(user._id), 
+                token: generateToken(user._id),
+                user: {
+                    _id: user.id,
+                    name: user.name,
+                    email: user.email,
+                }
             });
-        } 
-        else 
-        {
+        }
+        else {
             res.status(401).json({ message: 'Invalid email or password' });
         }
     } catch (error) {

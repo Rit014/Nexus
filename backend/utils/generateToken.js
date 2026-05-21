@@ -1,4 +1,4 @@
-const jwt = require('jsonWebToken');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const generateToken = (id) => {

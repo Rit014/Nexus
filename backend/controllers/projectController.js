@@ -31,8 +31,20 @@ const createProject = async (req, res) => {
     res.status(201).json(project);
 };
 
-// @desc    Delete a project and its associated tasks
-// @route   DELETE /api/projects/:id
+const getProjectById = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    res.json(project);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Delete a project and its associated tasks
+// DELETE /api/projects/:id
 const deleteProject = async (req, res) => {
     const project = await Project.findById(req.params.id);
 
@@ -47,4 +59,4 @@ const deleteProject = async (req, res) => {
     res.status(200).json({ id: req.params.id, message: "Project and its tasks deleted" });
 };
 
-module.exports = { getProjects, createProject, deleteProject };
+module.exports = { getProjects, createProject, getProjectById, deleteProject };

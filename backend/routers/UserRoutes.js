@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { registerUser, loginUser, getMe } = require('../controllers/userController');
 const { body, validationResult } = require('express-validator');
-const { protect } = require('../middleware/authmiddleware');
+const { protect } = require('../middleware/authMiddleware');
 
 const validateRegister = [
     body('email').isEmail().withMessage('Enter a valid email'),
