@@ -64,9 +64,13 @@ const TaskForm = ({ projectId, onCreated }) => {
         onChange={(e) => setDueDate(e.target.value)}
         className="border p-2 rounded"
       />
-      <button type="submit" className="bg-primary text-white py-2 rounded">
+      <button
+        type="submit"
+        className="bg-black text-white px-8 py-3 rounded w-full cursor-pointer"
+      >
         Create Task
       </button>
+
     </form>
   );
 };

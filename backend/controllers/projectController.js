@@ -32,15 +32,37 @@ const createProject = async (req, res) => {
 };
 
 const getProjectById = async (req, res) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    if (!project) {
-      return res.status(404).json({ message: "Project not found" });
+    try {
+        const project = await Project.findById(req.params.id);
+        if (!project) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+        res.json(project);
+    } catch (err) {
+        res.status(500).json({ message: "Server error" });
     }
-    res.json(project);
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
+};
+
+const updateProject = async (req, res) => {
+    try {
+        const updatedProject = await Project.findByIdAndUpdate(
+            req.params.id,
+            {
+                name: req.body.name,
+                description: req.body.description,
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedProject) {
+            return res.status(404).json({ error: "Project not found" });
+        }
+
+        res.json(updatedProject);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to update project" });
+    }
 };
 
 // Delete a project and its associated tasks
@@ -59,4 +81,4 @@ const deleteProject = async (req, res) => {
     res.status(200).json({ id: req.params.id, message: "Project and its tasks deleted" });
 };
 
-module.exports = { getProjects, createProject, getProjectById, deleteProject };
+module.exports = { getProjects, createProject, getProjectById, updateProject, deleteProject };

@@ -9,11 +9,9 @@ const RoleRoute = ({ allowedRoles }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (!allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  return <Outlet />;
+  return allowedRoles.includes(user?.role?.toLowerCase())
+    ? <Outlet />
+    : <Navigate to="/unauthorized" />;
 };
 
 export default RoleRoute;

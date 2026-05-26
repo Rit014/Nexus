@@ -13,6 +13,7 @@ import TaskForm from './pages/TaskForm';
 import ProjectForm from './pages/ProjectForm';
 import Projects from './pages/Projects';
 import ProjectDetails from './pages/ProjectDetails';
+import DashboardLayout from '#components/DashboardLayout';
 
 function App() {
 
@@ -26,12 +27,12 @@ function App() {
 
 
         <Route element={<ProtectedRouter />}>
-          <Route element={<Layout />}>
+          <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetails />} />
             <Route path="/project" element={<ProjectForm />} />
-            <Route path="/tasks" element={<TaskForm />} />
+            <Route path="/task" element={<TaskForm />} />
             <Route element={<RoleRoute allowedRoles={['admin']} />}>
               <Route path="/admin" element={<AdminPanel />} />
             </Route>

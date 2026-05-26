@@ -65,20 +65,29 @@ const getTasksByProject = async (req, res) => {
 
 
 const updateTask = async (req, res) => {
-    const task = await Task.findById(req.params.id);
+    try {
+        const updatedTask = await Task.findByIdAndUpdate(
+            req.params.id,
+            {
+                title: req.body.title,
+                description: req.body.description,
+                status: req.body.status || "To-Do",
+                priority: req.body.priority || "Medium",
+                dueDate: req.body.dueDate || null,
+            },
+            { new: true, runValidators: true }
+        );
 
-    if (!task) {
-        return res.send(404).json({ msg: "Task not found" });
+        if (!updatedTask) {
+            return res.status(404).json({ error: "Task not found" });
+        }
+
+        res.json(updatedTask);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to update task" });
     }
-
-    // Check if the task belongs to the logged-in user
-    if (req.params.toString() !== req.user.id) {
-        return res.send(401).json({ msg: "User is not Authorized to Update" });
-    }
-
-    const updateTask = await Task.findByIdAndUpdate(req.param.id, req.body, { new: true });
-    res.status(200).json({ updateTask });
-}
+};
 
 const deleteTask = async (req, res) => {
     const task = await Task.findById(req.params.id);

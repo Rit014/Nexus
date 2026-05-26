@@ -6,14 +6,13 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useAuth(); // we’ll reuse login to auto-login after register
+  const { login } = useAuth(); 
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      // call backend register API
-      const res = await fetch("/api/users", {
+      const res = await fetch("/api/users/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
@@ -26,6 +25,7 @@ const Register = () => {
       }
 
       const data = await res.json();
+      console.log("Registered user:", data);
 
       // if backend returns token + user, auto-login
       if (data.token && data.user) {

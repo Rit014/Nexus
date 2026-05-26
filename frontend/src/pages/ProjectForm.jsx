@@ -35,7 +35,7 @@ const ProjectForm = ({ onCreated }) => {
         onChange={(e) => setDescription(e.target.value)}
         className="border p-2 rounded"
       />
-      <button type="submit" className="bg-primary text-white py-2 rounded">
+      <button type="submit" className="bg-primary text-white py-2 rounded cursor-pointer">
         Create Project
       </button>
     </form>
