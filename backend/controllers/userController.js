@@ -1,7 +1,9 @@
+const crypto = require('crypto');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { generateToken } = require('../utils/generateToken');
+const sendEmail = require("../utils/sendEmail");
 
 const registerUser = async (req, res) => {
     const { name, email, password, role } = req.body;
@@ -18,22 +20,10 @@ const registerUser = async (req, res) => {
             newRole = "Admin";
         }
 
-        // const salt = await bcrypt.genSalt(10);
-        // const hashPassword = await bcrypt.hash(password, salt);
-
-        // creating the user
-
-        // const user = await User.create({
-        //     name,
-        //     email,
-        //     password: hashPassword,
-        //     role: newRole
-        // });
-
         const user = await User.create({
             name,
             email,
-            password,  // ✅ plain, the pre-save hook hashes it
+            password,
             role: newRole
         });
 
@@ -46,20 +36,19 @@ const registerUser = async (req, res) => {
                     email: user.email,
                     role: user.role || "User"
                 },
-            })
+            });
         }
 
     } catch (error) {
         console.log("REGISTER ERROR:", error);
-        res.status(500).json({ msg: "Server error during user Resgistration " });
+        res.status(500).json({ msg: "Server error during user Registration" });
     }
-}
+};
 
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-
         const user = await User.findOne({ email });
 
         if (user && (await bcrypt.compare(password, user.password))) {
@@ -72,20 +61,77 @@ const loginUser = async (req, res) => {
                     role: user.role
                 }
             });
-        }
-        else {
+        } else {
             res.status(401).json({ message: 'Invalid email or password' });
         }
     } catch (error) {
-        console.log("LOING ERROR:", error);
+        console.log("LOGIN ERROR:", error);
         res.status(500).json({ message: 'Server error during login' });
     }
+};
 
-}
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(200).json({ msg: "If this email exists, a reset link has been sent." });
+        }
+
+        const resetToken = crypto.randomBytes(32).toString("hex");
+        const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+        user.resetPasswordToken = hashedToken;
+        user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
+        await user.save();
+
+        const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+
+        await sendEmail({
+            to: user.email,
+            subject: "Password Reset Request",
+            text: `You requested a password reset. Please click the link below:\n\n${resetUrl}\n\nThis link expires in 15 minutes.`
+        });
+
+        res.status(200).json({ msg: "Reset link sent to email." });
+    } catch (error) {
+        console.error("FORGOT PASSWORD ERROR:", error.message);
+        res.status(500).json({ msg: "Server error during forgot password." });
+    }
+};
+
+const resetPassword = async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    try {
+        const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+        const user = await User.findOne({
+            resetPasswordToken: hashedToken,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({ msg: "Invalid or expired token" });
+        }
+
+        user.password = password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        await user.save();
+
+        res.status(200).json({ msg: "Password reset successful. You can now log in." });
+    } catch (error) {
+        console.error("RESET PASSWORD ERROR:", error.message);
+        res.status(500).json({ msg: "Server error during reset password." });
+    }
+};
 
 const getMe = async (req, res) => {
-    // req.user is already available thanks to our protect middleware!
     res.status(200).json(req.user);
 };
 
-module.exports = { registerUser, loginUser, getMe }
+module.exports = { registerUser, loginUser, getMe, forgotPassword, resetPassword };

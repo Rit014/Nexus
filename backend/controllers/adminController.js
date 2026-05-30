@@ -75,4 +75,26 @@ const deleteUser = async (req, res) => {
     }
 };
 
-module.exports = { createAdmin, getUsers, updateUserRole, deleteUser };
+const getUserStats = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const projectCount = await Project.countDocuments({ owner: userId });
+    const taskCount = await Task.countDocuments({ assignedTo: userId });
+    const upcomingDeadlines = await Task.countDocuments({
+      assignedTo: userId,
+      dueDate: { $gte: new Date(), $lte: new Date(Date.now() + 7*24*60*60*1000) }
+    });
+
+    res.json({
+      projects: projectCount,
+      tasks: taskCount,
+      upcomingDeadlines
+    });
+  } catch (error) {
+    console.error("Admin stats error:", error.message);
+    res.status(500).json({ msg: "Server error fetching stats" });
+  }
+};
+
+module.exports = { createAdmin, getUsers, updateUserRole, deleteUser, getUserStats };

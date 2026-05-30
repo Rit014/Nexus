@@ -46,6 +46,11 @@ const Login = () => {
                         Sign In
                     </button>
                 </form>
+                <p className="mt-4 text-center">
+                    <a href="/forgot-password" className="text-indigo-600 hover:underline">
+                        Forgot Password?
+                    </a>
+                </p>
             </div>
         </div>
     );

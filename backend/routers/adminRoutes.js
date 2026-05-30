@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { protect, adminOnly } = require("../middleware/authMiddleware");
+const {getUserStats} = require("../controllers/adminController")
 const User = require("../models/User");
 const Project = require("../models/Project");
 const Task = require("../models/Task");
@@ -31,5 +32,7 @@ router.get("/users/:id/stats", protect, adminOnly, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+router.get("/admin/users/${user._id}/stats", protect, adminOnly, getUserStats);
 
 module.exports = router;

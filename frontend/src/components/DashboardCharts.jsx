@@ -1,8 +1,24 @@
-import { Pie, Bar, Line } from "react-chartjs-2";
+import { Pie, Bar } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
+import { Skeleton } from "#components/ui/skeleton";
 
-const DashboardCharts = ({ tasks }) => {
-  // Status distribution
+const DashboardCharts = ({ tasks, loading }) => {
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <div className="p-6 border rounded bg-white dark:bg-gray-800">
+          <h3 className="text-lg font-semibold mb-4">Task Status</h3>
+          <Skeleton className="h-40 w-full" />
+        </div>
+        <div className="p-6 border rounded bg-white dark:bg-gray-800">
+          <h3 className="text-lg font-semibold mb-4">Task Priority</h3>
+          <Skeleton className="h-40 w-full" />
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ Status distribution
   const statusCounts = tasks.reduce((acc, t) => {
     acc[t.status] = (acc[t.status] || 0) + 1;
     return acc;
@@ -18,7 +34,7 @@ const DashboardCharts = ({ tasks }) => {
     ],
   };
 
-  // Priority distribution
+  // ✅ Priority distribution
   const priorityCounts = tasks.reduce((acc, t) => {
     acc[t.priority] = (acc[t.priority] || 0) + 1;
     return acc;
@@ -37,11 +53,11 @@ const DashboardCharts = ({ tasks }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
         <h3 className="font-bold mb-2">Task Status</h3>
         <Pie data={statusData} />
       </div>
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
         <h3 className="font-bold mb-2">Task Priority</h3>
         <Bar data={priorityData} />
       </div>

@@ -18,6 +18,7 @@ const projectRoutes = require('./routers/ProjectRoutes.js');
 const adminRoutes = require('./routers/adminRoutes.js')
 
 
+
 app.use(cors()); // allow our react app to make requests
 
 app.use('/api/tasks', taskRoutes);

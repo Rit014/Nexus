@@ -14,6 +14,8 @@ import ProjectForm from './pages/ProjectForm';
 import Projects from './pages/Projects';
 import ProjectDetails from './pages/ProjectDetails';
 import DashboardLayout from '#components/DashboardLayout';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
 
@@ -24,6 +26,8 @@ function App() {
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
         <Route path='/unauthorized' element={<Unauthorized />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
 
         <Route element={<ProtectedRouter />}>

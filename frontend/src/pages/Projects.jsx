@@ -23,14 +23,16 @@ const Projects = () => {
       <h2 className="text-2xl font-bold">Projects</h2>
 
       {projects.length === 0 ? (
-        <p className="text-gray-600">No projects yet. Create one from the dashboard!</p>
+        <p className="text-gray-600">
+          No projects yet. Create one from the dashboard!
+        </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {projects.map((project) => (
             <Link
               key={project._id}
               to={`/projects/${project._id}`}
-              className="block bg-card text-card-foreground p-6 rounded-lg shadow-md border border-border hover:bg-slate-50"
+              className="block bg-card text-card-foreground p-6 rounded-lg shadow-md border border-border hover:bg-slate-50 dark:hover:bg-gray-800"
             >
               <h3 className="text-lg font-semibold">{project.name}</h3>
               <p className="text-sm text-gray-500">{project.description}</p>
