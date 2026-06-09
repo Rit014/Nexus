@@ -6,7 +6,34 @@ import TaskForm from "./TaskForm";
 import DashboardCharts from "#components/DashboardCharts";
 import TaskList from "#components/TaskList";
 import { Skeleton } from "#components/ui/skeleton";
-import Projects from "../pages/Projects"  // ✅ Import Projects
+import Projects from "../pages/Projects";
+
+// Stat card icons
+const icons = {
+  projects:  "📁",
+  tasks:     "✅",
+  deadlines: "⏰",
+};
+
+const StatCard = ({ title, value, loading, icon, accent }) => (
+  <div className={`relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 shadow-sm overflow-hidden`}>
+    {/* Accent bar */}
+    <div className={`absolute top-0 left-0 w-1 h-full rounded-l-2xl ${accent}`} />
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{title}</p>
+        {loading ? (
+          <Skeleton className="h-8 w-16 mt-2" />
+        ) : (
+          <p className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-1">
+            {value}
+          </p>
+        )}
+      </div>
+      <span className="text-3xl opacity-80">{icon}</span>
+    </div>
+  </div>
+);
 
 const Dashboard = () => {
   const [projectsCount, setProjectsCount] = useState(0);
@@ -14,8 +41,8 @@ const Dashboard = () => {
   const [lastProjectId, setLastProjectId] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [loadingTasks, setLoadingTasks] = useState(true);
+  const [loadingProjects, setLoadingProjects] = useState(true);
 
-  // ✅ setters from DashboardLayout
   const { setDeadlinesCount, setUpcomingTasks } = useOutletContext();
 
   const fetchTasks = async () => {
@@ -24,21 +51,16 @@ const Dashboard = () => {
       const res = await API.get("/tasks");
       setTasks(res.data);
 
-      // Pending tasks
       const pending = res.data.filter(
         (t) => t.status === "To-Do" || t.status === "In Progress"
       );
       setPendingTasksCount(pending.length);
 
-      // Upcoming deadlines (within 7 days)
       const upcoming = res.data.filter((t) => {
         if (!t.dueDate) return false;
-        const due = new Date(t.dueDate);
-        const now = new Date();
-        const diff = (due - now) / (1000 * 60 * 60 * 24);
+        const diff = (new Date(t.dueDate) - new Date()) / (1000 * 60 * 60 * 24);
         return diff >= 0 && diff <= 7;
       });
-
       setDeadlinesCount(upcoming.length);
       setUpcomingTasks(upcoming);
     } catch (err) {
@@ -50,14 +72,16 @@ const Dashboard = () => {
 
   const fetchProjects = async () => {
     try {
-      const projectsRes = await API.get("/projects");
-      setProjectsCount(projectsRes.data.length);
-
-      if (projectsRes.data.length > 0) {
-        setLastProjectId(projectsRes.data[projectsRes.data.length - 1]._id);
+      setLoadingProjects(true);
+      const res = await API.get("/projects");
+      setProjectsCount(res.data.length);
+      if (res.data.length > 0) {
+        setLastProjectId(res.data[res.data.length - 1]._id);
       }
     } catch (err) {
       console.error("Project fetch error:", err);
+    } finally {
+      setLoadingProjects(false);
     }
   };
 
@@ -66,53 +90,52 @@ const Dashboard = () => {
     fetchTasks();
   }, []);
 
+  const deadlinesCount = tasks.filter((t) => {
+    if (!t.dueDate) return false;
+    const diff = (new Date(t.dueDate) - new Date()) / (1000 * 60 * 60 * 24);
+    return diff >= 0 && diff <= 7;
+  }).length;
+
   return (
     <div className="space-y-8">
-      {/* Dashboard cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-card p-6 rounded-lg shadow-md border">
-          <h3 className="text-lg font-semibold">Active Projects</h3>
-          {projectsCount === 0 ? (
-            <Skeleton className="h-8 w-16 mt-2" />
-          ) : (
-            <p className="text-2xl font-bold">{projectsCount}</p>
-          )}
-        </div>
 
-        <div className="bg-card p-6 rounded-lg shadow-md border">
-          <h3 className="text-lg font-semibold">Pending Tasks</h3>
-          {loadingTasks ? (
-            <Skeleton className="h-8 w-16 mt-2" />
-          ) : (
-            <p className="text-2xl font-bold">{pendingTasksCount}</p>
-          )}
-        </div>
-
-        <div className="bg-card p-6 rounded-lg shadow-md border">
-          <h3 className="text-lg font-semibold">Upcoming Deadlines</h3>
-          {loadingTasks ? (
-            <Skeleton className="h-8 w-16 mt-2" />
-          ) : (
-            <p className="text-2xl font-bold">
-              {tasks.filter((t) => {
-                if (!t.dueDate) return false;
-                const due = new Date(t.dueDate);
-                const now = new Date();
-                const diff = (due - now) / (1000 * 60 * 60 * 24);
-                return diff >= 0 && diff <= 7;
-              }).length}
-            </p>
-          )}
-        </div>
+      {/* ── Stat cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <StatCard
+          title="Active Projects"
+          value={projectsCount}
+          loading={loadingProjects}
+          icon={icons.projects}
+          accent="bg-indigo-500"
+        />
+        <StatCard
+          title="Pending Tasks"
+          value={pendingTasksCount}
+          loading={loadingTasks}
+          icon={icons.tasks}
+          accent="bg-amber-400"
+        />
+        <StatCard
+          title="Upcoming Deadlines"
+          value={deadlinesCount}
+          loading={loadingTasks}
+          icon={icons.deadlines}
+          accent="bg-rose-500"
+        />
       </div>
 
-      {/* Charts */}
+      {/* ── Charts ── */}
       <div>
-        <h2 className="text-xl md:text-2xl lg:text-3xl font-bold">Dashboard</h2>
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">
+          Overview
+        </h2>
+        <p className="text-sm text-gray-400 dark:text-gray-500 mb-2">
+          Visual breakdown of your tasks
+        </p>
         <DashboardCharts tasks={tasks} loading={loadingTasks} />
       </div>
 
-      {/* Forms */}
+      {/* ── Forms ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ProjectForm onCreated={(project) => setLastProjectId(project._id)} />
         {lastProjectId && (
@@ -120,13 +143,11 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* Projects list */}
+      {/* ── Projects list ── */}
       <Projects />
 
-      {/* Tasks list */}
-      <div>
-        <TaskList tasks={tasks} loading={loadingTasks} />
-      </div>
+      {/* ── Tasks list ── */}
+      <TaskList tasks={tasks} loading={loadingTasks} />
     </div>
   );
 };

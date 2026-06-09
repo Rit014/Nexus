@@ -20,10 +20,12 @@ const Projects = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Projects</h2>
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        Projects
+      </h2>
 
       {projects.length === 0 ? (
-        <p className="text-gray-600">
+        <p className="text-gray-500 dark:text-gray-400">
           No projects yet. Create one from the dashboard!
         </p>
       ) : (
@@ -32,11 +34,18 @@ const Projects = () => {
             <Link
               key={project._id}
               to={`/projects/${project._id}`}
-              className="block bg-card text-card-foreground p-6 rounded-lg shadow-md border border-border hover:bg-slate-50 dark:hover:bg-gray-800"
+              className="block
+                bg-white dark:bg-gray-800
+                border border-gray-200 dark:border-gray-700
+                text-gray-900 dark:text-gray-100
+                hover:bg-gray-50 dark:hover:bg-gray-700
+                p-6 rounded-xl shadow-sm transition-colors"
             >
               <h3 className="text-lg font-semibold">{project.name}</h3>
-              <p className="text-sm text-gray-500">{project.description}</p>
-              <p className="mt-2 text-sm">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {project.description}
+              </p>
+              <p className="mt-2 text-sm text-gray-400 dark:text-gray-500">
                 Created: {new Date(project.createdAt).toLocaleDateString()}
               </p>
             </Link>

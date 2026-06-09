@@ -2,7 +2,11 @@
 @import "tw-animate-css";
 @import "@fontsource-variable/geist";
 
+/* ✅ Tailwind v4 dark mode — triggered by .dark class on <html> */
 @custom-variant dark (&:is(.dark *));
+
+/* ✅ Also add this so <html> itself gets dark styles (background, etc.) */
+@custom-variant dark-root (&.dark);
 
 @theme inline {
     --font-heading: var(--font-sans);
@@ -119,12 +123,11 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
   body {
     @apply bg-background text-foreground;
-    }
+  }
   html {
     @apply font-sans;
-    }
+  }
 }
-

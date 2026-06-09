@@ -5,9 +5,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react(),
-  tailwindcss({
-    darkMode: 'class'
-  })
+  tailwindcss(),
   ],
   resolve: {
     alias: {

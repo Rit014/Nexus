@@ -9,7 +9,7 @@ import Home from './pages/Home';
 import Unauthorized from './pages/Unauthorized';
 import AdminPanel from './pages/AdminPanel';
 import RoleRoute from './components/RoleRoute';
-import TaskForm from './pages/TaskForm';
+import TaskPage from './pages/TaskPage';
 import ProjectForm from './pages/ProjectForm';
 import Projects from './pages/Projects';
 import ProjectDetails from './pages/ProjectDetails';
@@ -36,7 +36,7 @@ function App() {
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetails />} />
             <Route path="/project" element={<ProjectForm />} />
-            <Route path="/task" element={<TaskForm />} />
+            <Route path="/task" element={<TaskPage />} />
             <Route element={<RoleRoute allowedRoles={['admin']} />}>
               <Route path="/admin" element={<AdminPanel />} />
             </Route>
