@@ -1,4 +1,6 @@
-const crypto = require('crypto');
+// ✅ FIX: use node: prefix to explicitly import Node's built-in crypto
+// This avoids conflict with the Web Crypto API in Node 18+
+const crypto = require('node:crypto');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -15,17 +17,11 @@ const registerUser = async (req, res) => {
         }
 
         let newRole = "User";
-
         if (req.user && req.user.role === "Admin" && role === "Admin") {
             newRole = "Admin";
         }
 
-        const user = await User.create({
-            name,
-            email,
-            password,
-            role: newRole
-        });
+        const user = await User.create({ name, email, password, role: newRole });
 
         if (user) {
             res.status(201).json({
@@ -38,7 +34,6 @@ const registerUser = async (req, res) => {
                 },
             });
         }
-
     } catch (error) {
         console.log("REGISTER ERROR:", error);
         res.status(500).json({ msg: "Server error during user Registration" });
@@ -86,18 +81,20 @@ const forgotPassword = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
         await user.save();
 
-        const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+        // ✅ Use env variable instead of hardcoded localhost
+        const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+        const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
         await sendEmail({
             to: user.email,
-            subject: "Password Reset Request",
-            text: `You requested a password reset. Please click the link below:\n\n${resetUrl}\n\nThis link expires in 15 minutes.`
+            subject: "Password Reset Request - Nexus",
+            text: `You requested a password reset.\n\nClick the link below:\n\n${resetUrl}\n\nThis link expires in 15 minutes.\n\nIf you didn't request this, ignore this email.`
         });
 
-        res.status(200).json({ msg: "Reset link sent to email." });
+        res.status(200).json({ msg: "Reset link sent to your email." });
     } catch (error) {
         console.error("FORGOT PASSWORD ERROR:", error.message);
-        res.status(500).json({ msg: "Server error during forgot password." });
+        res.status(500).json({ msg: "Failed to send reset email. Please try again." });
     }
 };
 
@@ -114,13 +111,12 @@ const resetPassword = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(400).json({ msg: "Invalid or expired token" });
+            return res.status(400).json({ msg: "Invalid or expired reset link. Please request a new one." });
         }
 
         user.password = password;
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
-
         await user.save();
 
         res.status(200).json({ msg: "Password reset successful. You can now log in." });
