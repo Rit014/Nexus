@@ -1,5 +1,3 @@
-// ✅ FIX: use node: prefix to explicitly import Node's built-in crypto
-// This avoids conflict with the Web Crypto API in Node 18+
 const crypto = require('node:crypto');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
