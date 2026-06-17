@@ -1,25 +1,14 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require('resend');
 
 const sendEmail = async (options) => {
-  const transporter = nodemailer.createTransport({
-    // service: "gmail",
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false, 
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-
-  const mailOptions = {
-    from: `"Nexus Dashboard" <${process.env.EMAIL_USER}>`,
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  
+  await resend.emails.send({
+    from: 'Nexus <onboarding@resend.dev>',
     to: options.to,
     subject: options.subject,
     text: options.text,
-  };
-
-  await transporter.sendMail(mailOptions);
+  });
 };
 
 module.exports = sendEmail;
