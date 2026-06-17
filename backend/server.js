@@ -3,15 +3,26 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db.js');
 
-dotenv.config(); // ✅ only once
+dotenv.config();
 connectDB();
 
 const app = express();
-
 app.use(express.json());
 
+// ✅ Allow all Vercel preview URLs + production URL
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  origin: (origin, callback) => {
+    const allowed = [
+      process.env.FRONTEND_URL,
+      'http://localhost:5173',
+    ];
+    // Allow all *.vercel.app URLs (preview deployments)
+    if (!origin || origin.endsWith('.vercel.app') || allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
