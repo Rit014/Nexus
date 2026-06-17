@@ -1,35 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import API from "../lib/api"; // ✅ use API instance
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useAuth(); 
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/users/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
+      const res = await API.post("/users/register", { name, email, password });
+      const data = res.data;
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        alert(errorData.msg || "Registration failed");
-        return;
-      }
-
-      const data = await res.json();
-      console.log("Registered user:", data);
-
-      // if backend returns token + user, auto-login
       if (data.token && data.user) {
-        login({ email: data.user.email, password }); 
+        login({ email: data.user.email, password });
         navigate("/dashboard");
       } else {
         alert("Registered successfully, please login.");
@@ -37,7 +25,8 @@ const Register = () => {
       }
     } catch (err) {
       console.error("Registration error:", err);
-      alert("Network error during registration");
+      const msg = err.response?.data?.msg || "Registration failed";
+      alert(msg);
     }
   };
 
