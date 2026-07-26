@@ -1,5 +1,6 @@
 import { useState } from "react";
 import API from "../lib/api";
+import { toast } from 'sonner';
 
 const ProjectForm = ({ onCreated }) => {
   const [name, setName] = useState("");
@@ -9,13 +10,13 @@ const ProjectForm = ({ onCreated }) => {
     e.preventDefault();
     try {
       const res = await API.post("/projects", { name, description });
-      alert("Project created!");
+      toast.success("Project created!");
       if (onCreated) onCreated(res.data);
       setName("");
       setDescription("");
     } catch (err) {
       console.error("Error creating project:", err);
-      alert("Failed to create project");
+      toast.error("Failed to create project");
     }
   };
 

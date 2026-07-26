@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
-import API from "../lib/api"; // ✅ use API instance
+import API from "../lib/api";
+import { toast } from 'sonner';
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -17,16 +18,17 @@ const Register = () => {
       const data = res.data;
 
       if (data.token && data.user) {
+        toast.success("Welcome! Your account is ready.");
         login({ email: data.user.email, password });
         navigate("/dashboard");
       } else {
-        alert("Registered successfully, please login.");
+        toast.success("Registered successfully, please login.");
         navigate("/login");
       }
     } catch (err) {
       console.error("Registration error:", err);
       const msg = err.response?.data?.msg || "Registration failed";
-      alert(msg);
+      toast.error(msg);
     }
   };
 

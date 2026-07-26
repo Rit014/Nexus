@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../lib/api";
+import { toast } from 'sonner';
 
 const inputCls = `
   border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm
@@ -68,11 +69,11 @@ const AdminPanel = () => {
         password: newPassword,
       });
       setUsers([...users, res.data]);
-      alert(`Admin ${res.data.name} created successfully`);
+      toast.success(`Admin ${res.data.name} created successfully`);
       setNewName(""); setNewEmail(""); setNewPassword("");
     } catch (err) {
       console.error("Admin creation error:", err);
-      alert("Failed to create admin");
+toast.error("Failed to create admin");
     }
   };
 
@@ -88,9 +89,9 @@ const AdminPanel = () => {
           Create New Admin
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <input type="text"      placeholder="Name"     value={newName}     onChange={(e) => setNewName(e.target.value)}     className={inputCls} />
-          <input type="email"     placeholder="Email"    value={newEmail}    onChange={(e) => setNewEmail(e.target.value)}    className={inputCls} />
-          <input type="password"  placeholder="Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={inputCls} />
+          <input type="text" placeholder="Name" value={newName} onChange={(e) => setNewName(e.target.value)} className={inputCls} />
+          <input type="email" placeholder="Email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} className={inputCls} />
+          <input type="password" placeholder="Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={inputCls} />
         </div>
         <button
           onClick={createAdmin}
@@ -106,7 +107,7 @@ const AdminPanel = () => {
 
           <thead className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
             <tr>
-              {["Name","Email","Role","Projects","Tasks","Actions"].map((h) => (
+              {["Name", "Email", "Role", "Projects", "Tasks", "Actions"].map((h) => (
                 <th key={h} className="px-4 py-3 whitespace-nowrap font-semibold">
                   {h}
                 </th>
@@ -132,11 +133,10 @@ const AdminPanel = () => {
                 <td className="px-4 py-3 whitespace-nowrap">{u.email}</td>
                 <td className="px-4 py-3 whitespace-nowrap">
                   <span
-                    className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                      u.role === "Admin"
+                    className={`px-2.5 py-1 rounded-full text-xs font-semibold ${u.role === "Admin"
                         ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300"
                         : "bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300"
-                    }`}
+                      }`}
                   >
                     {u.role}
                   </span>

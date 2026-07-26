@@ -5,12 +5,14 @@ import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext'
 import { BrowserRouter } from 'react-router-dom'
+import { Toaster } from 'sonner';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <App />
+        <Toaster richColors position="top-right" />
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>

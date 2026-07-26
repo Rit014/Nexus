@@ -1,5 +1,6 @@
 import { useState } from "react";
 import API from "../lib/api";
+import { toast } from 'sonner';
 
 const inputCls = `
   w-full border border-gray-300 dark:border-gray-600
@@ -39,10 +40,11 @@ const TaskForm = ({ projectId, onTaskCreated }) => {
       setStatus("To-Do");
       setDueDate("");
       setSuccess(true);
+      toast.success("Task created successfully!");
       setTimeout(() => setSuccess(false), 2500);
     } catch (err) {
       console.error("Error creating task:", err);
-      alert("Failed to create task");
+      toast.error("Failed to create task");
     } finally {
       setLoading(false);
     }
@@ -61,11 +63,11 @@ const TaskForm = ({ projectId, onTaskCreated }) => {
         <h3 className="font-bold text-gray-800 dark:text-gray-100 text-base">
           New Task
         </h3>
-        {success && (
+        {/* {success && (
           <span className="text-xs text-emerald-500 font-medium animate-pulse">
             ✅ Task created!
           </span>
-        )}
+        )} */}
       </div>
 
       <input

@@ -8,6 +8,7 @@ import TaskList from "#components/TaskList";
 import { Skeleton } from "#components/ui/skeleton";
 import Projects from "../pages/Projects";
 // import AISuggestTasks from "#components/AISuggestTasks";
+import { toast } from 'sonner';
 
 // Stat card icons
 const icons = {
@@ -99,7 +100,7 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8">
-
+      <button onClick={() => toast.success('Test toast')}>Test Toast</button>
       {/* ── Stat cards ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard

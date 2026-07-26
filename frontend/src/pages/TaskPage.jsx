@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import API from "../lib/api";
 import TaskForm from "../pages/TaskForm";
 import TaskList from "../components/TaskList";
+import { toast } from 'sonner';
 
 const TaskPage = () => {
   const [projects, setProjects] = useState([]);
@@ -42,6 +43,7 @@ const TaskPage = () => {
 
   const handleTaskCreated = (newTask) => {
     setTasks((prev) => [newTask, ...prev]);
+    // toast.success("Task created successfully!");
   };
 
   return (
