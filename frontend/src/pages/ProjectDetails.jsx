@@ -4,6 +4,7 @@ import API from "../lib/api";
 import TaskForm from "./TaskForm";
 import Modal from "#components/Modal";
 import AISuggestTasks from "#components/AISuggestTasks";
+import AIProjectSummary from "#components/AIProjectSummary";
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -96,87 +97,102 @@ const ProjectDetails = () => {
 
   return (
     <div className="space-y-6 p-4 md:p-6">
-      {/* Project header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 truncate">
+
+      {/* ── Project header ── */}
+      <div className="flex flex-col gap-3">
+        {/* Project name */}
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           {project.name}
         </h2>
-        <div className="flex gap-2 w-full sm:w-auto">
+
+        {/* Description */}
+        {project.description && (
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            {project.description}
+          </p>
+        )}
+
+        {/* ✅ All buttons in one row, wrapping on small screens */}
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={handleEditProject}
-            className="flex-1 sm:flex-none bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
+            className="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
           >
             Edit Project
           </button>
           <button
             onClick={() => handleDeleteProject(project._id)}
-            className="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
+            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
           >
             Delete Project
           </button>
+          <AIProjectSummary
+            projectId={project._id}
+            projectName={project.name}
+            projectDescription={project.description}
+            tasks={tasks}
+          />
         </div>
       </div>
 
-      <p className="text-gray-500 dark:text-gray-400">{project.description}</p>
-
-      {/* Tasks list */}
-      <h3 className="text-xl font-semibold mt-4 text-gray-800 dark:text-gray-100">
-        Tasks
-      </h3>
-      {tasks.length === 0 ? (
-        <p className="text-gray-500 dark:text-gray-400">
-          No tasks yet for this project.
-        </p>
-      ) : (
-        <ul className="space-y-3">
-          {tasks.map((task) => (
-            <li
-              key={task._id}
-              className="bg-white dark:bg-gray-800
-                border border-gray-200 dark:border-gray-700
-                text-gray-900 dark:text-gray-100
-                p-4 rounded-xl"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-semibold">{task.title}</h4>
-                  <p className="text-sm text-gray-400 dark:text-gray-500">
-                    {task.description}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleEditTask(task)}
-                    className="bg-amber-500 hover:bg-amber-600 text-white px-2 py-1 rounded-lg text-sm transition-colors"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteTask(task._id)}
-                    className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-lg text-sm transition-colors"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Status: {task.status} | Priority: {task.priority}
-              </p>
-              {task.dueDate && (
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Due: {new Date(task.dueDate).toLocaleDateString()}
-                </p>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {/* Task form — ✅ onTaskCreated adds new task instantly without refresh */}
-      <div className="mt-6">
-        <h3 className="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">
-          Add a Task
+      {/* ── Tasks list ── */}
+      <div>
+        <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+          Tasks
         </h3>
+        {tasks.length === 0 ? (
+          <p className="text-gray-500 dark:text-gray-400">
+            No tasks yet for this project.
+          </p>
+        ) : (
+          <ul className="space-y-3">
+            {tasks.map((task) => (
+              <li
+                key={task._id}
+                className="bg-white dark:bg-gray-800
+                  border border-gray-200 dark:border-gray-700
+                  text-gray-900 dark:text-gray-100
+                  p-4 rounded-xl"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-semibold">{task.title}</h4>
+                    <p className="text-sm text-gray-400 dark:text-gray-500">
+                      {task.description}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={() => handleEditTask(task)}
+                      className="bg-amber-500 hover:bg-amber-600 text-white px-2 py-1 rounded-lg text-sm transition-colors"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteTask(task._id)}
+                      className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-lg text-sm transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  Status: {task.status} | Priority: {task.priority}
+                </p>
+                {task.dueDate && (
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Due: {new Date(task.dueDate).toLocaleDateString()}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* ── Add Task section ── */}
+      <div className="mt-6">
+        {/* ✅ Single heading with AI button — no duplicate */}
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">
             Add a Task
