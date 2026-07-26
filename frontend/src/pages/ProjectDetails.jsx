@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import API from "../lib/api";
 import TaskForm from "./TaskForm";
 import Modal from "#components/Modal";
+import AISuggestTasks from "#components/AISuggestTasks";
 
 const ProjectDetails = () => {
   const { id } = useParams();
@@ -96,20 +97,20 @@ const ProjectDetails = () => {
   return (
     <div className="space-y-6 p-4 md:p-6">
       {/* Project header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 truncate">
           {project.name}
         </h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           <button
             onClick={handleEditProject}
-            className="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
+            className="flex-1 sm:flex-none bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
           >
             Edit Project
           </button>
           <button
             onClick={() => handleDeleteProject(project._id)}
-            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
+            className="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
           >
             Delete Project
           </button>
@@ -176,6 +177,17 @@ const ProjectDetails = () => {
         <h3 className="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">
           Add a Task
         </h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">
+            Add a Task
+          </h3>
+          <AISuggestTasks
+            projectId={project._id}
+            projectName={project.name}
+            projectDescription={project.description}
+            onTasksCreated={(newTasks) => setTasks((prev) => [...newTasks, ...prev])}
+          />
+        </div>
         <TaskForm
           projectId={project._id}
           onTaskCreated={(newTask) => setTasks((prev) => [newTask, ...prev])}

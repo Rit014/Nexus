@@ -7,11 +7,12 @@ import DashboardCharts from "#components/DashboardCharts";
 import TaskList from "#components/TaskList";
 import { Skeleton } from "#components/ui/skeleton";
 import Projects from "../pages/Projects";
+// import AISuggestTasks from "#components/AISuggestTasks";
 
 // Stat card icons
 const icons = {
-  projects:  "📁",
-  tasks:     "✅",
+  projects: "📁",
+  tasks: "✅",
   deadlines: "⏰",
 };
 
@@ -138,6 +139,15 @@ const Dashboard = () => {
       {/* ── Forms ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ProjectForm onCreated={(project) => setLastProjectId(project._id)} />
+        {/*{lastProjectId && (
+          <div className="flex justify-end">
+            <AISuggestTasks
+              projectId={lastProjectId}
+              projectName="My Project"
+              onTasksCreated={fetchTasks}
+            />
+          </div>
+        )}*/}
         {lastProjectId && (
           <TaskForm projectId={lastProjectId} onTaskCreated={fetchTasks} />
         )}

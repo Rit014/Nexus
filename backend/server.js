@@ -31,11 +31,13 @@ const userRoutes = require("./routers/UserRoutes.js");
 const projectRoutes = require('./routers/ProjectRoutes.js');
 const adminRoutes = require('./routers/adminRoutes.js');
 const { errorHandler } = require('./middleware/errorMiddleware.js');
+const aiRoutes = require('./routers/AiRoutes.js');
 
 app.use('/api/tasks', taskRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/ai', aiRoutes);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
