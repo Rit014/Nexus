@@ -100,7 +100,6 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8">
-      <button onClick={() => toast.success('Test toast')}>Test Toast</button>
       {/* ── Stat cards ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
