@@ -1,13 +1,13 @@
-const { Resend } = require('resend');
+const { BrevoClient } = require('@getbrevo/brevo');
+
+const brevo = new BrevoClient({ apiKey: process.env.BREVO_API_KEY });
 
 const sendEmail = async (options) => {
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  
-  await resend.emails.send({
-    from: 'Nexus <onboarding@resend.dev>',
-    to: options.to,
+  await brevo.transactionalEmails.sendTransacEmail({
+    sender: { name: 'Nexus Dashboard', email: 'ritu72052@gmail.com' },
+    to: [{ email: options.to }],
     subject: options.subject,
-    text: options.text,
+    textContent: options.text,
   });
 };
 

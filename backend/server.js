@@ -15,6 +15,7 @@ app.use(cors({
     const allowed = [
       process.env.FRONTEND_URL,
       'http://localhost:5173',
+      'https://localhost:5173',
     ];
     // Allow all *.vercel.app URLs (preview deployments)
     if (!origin || origin.endsWith('.vercel.app') || allowed.includes(origin)) {
@@ -39,9 +40,6 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/ai', aiRoutes);
 
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
-});
 
 app.use(errorHandler);
 

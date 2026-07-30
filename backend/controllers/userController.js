@@ -7,7 +7,7 @@ const sendEmail = require("../utils/sendEmail");
 
 const registerUser = async (req, res) => {
     const { name, email, password, role } = req.body;
-
+    console.log("Register attempt:", { name, email }); 
     try {
         const userExists = await User.findOne({ email });
         if (userExists) {
