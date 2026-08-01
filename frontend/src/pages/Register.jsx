@@ -4,6 +4,8 @@ import { useAuth } from "../context/useAuth";
 import API from "../lib/api";
 import { toast } from 'sonner';
 
+const BACKEND_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5000").replace(/\/$/, "");
+
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -68,6 +70,20 @@ const Register = () => {
             Sign Up
           </button>
         </form>
+
+        <div className="flex items-center gap-3 my-4">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-xs text-muted-foreground">OR</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+
+        <a
+          href={`${BACKEND_URL}/api/users/auth/google`}
+          className="flex items-center justify-center gap-2 w-full border border-gray-300 dark:border-gray-600 rounded-md py-2 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="" />
+          Continue with Google
+        </a>
       </div>
     </div>
   );

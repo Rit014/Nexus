@@ -16,6 +16,7 @@ import ProjectDetails from './pages/ProjectDetails';
 import DashboardLayout from '#components/DashboardLayout';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import GoogleAuthSuccess from './pages/GoogleAuthSuccess';
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
+        <Route path="/auth/google/success" element={<GoogleAuthSuccess />} />
         <Route path='/unauthorized' element={<Unauthorized />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />

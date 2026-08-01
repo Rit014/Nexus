@@ -21,8 +21,19 @@ const userSchema = mongoose.Schema(
       enum: ["User", "Admin"],
       default: "User"
     },
-    resetPasswordToken: { type: String },
-    resetPasswordExpires: { type: Date },
+    resetPasswordToken:
+    {
+      type: String
+    },
+    resetPasswordExpires: {
+      type: Date
+    },
+    googleId: {
+      type: String
+    },
+    avatar: {
+      type: String
+    },
   },
   {
     timestamps: true,

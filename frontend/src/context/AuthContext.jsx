@@ -36,6 +36,15 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // ✅ Used by the Google OAuth success page — stores an already-issued
+    // token/user (from the backend redirect) the same way a normal login does,
+    // without making another API call.
+    const loginWithToken = (token, user) => {
+        localStorage.setItem("token", token);
+        localStorage.setItem("authUser", JSON.stringify(user));
+        setUser(user);
+    };
+
     const logout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("authUser");
@@ -44,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, loginWithToken, logout }}>
             {loading ? null : children}
         </AuthContext.Provider>
     );
