@@ -4,7 +4,7 @@ import { useAuth } from "../context/useAuth";
 import API from "../lib/api";
 import { toast } from 'sonner';
 
-const BACKEND_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5000").replace(/\/$/, "");
+const BACKEND_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
 const Register = () => {
   const [name, setName] = useState("");
